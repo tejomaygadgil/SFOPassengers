@@ -17,14 +17,17 @@ save SFO_Passengers.dta
 
 sort operatingairline1
 **** assuming plot passengercount
-by operatingairline1 activityperiod: egen monthly_enplaned=sum(passengercount) if activitytypecode1==2
+by operatingairline1 activityperiod: egen monthly_enplaned=sum(passengercount) if activitytypecode1==2&geosummary1==1
 by operatingairline1 activityperiod, sort: gen nvals = _n ==1
-by operatingairline1: egen avg_monthly_enplaned=mean(activityperiod) if nvals==1
+by operatingairline1: egen avg_monthly_enplaned=mean(monthly_enplaned)
 
-tab avg_monthly_enplaned if geosummary1==1
-tab operatingairline1 if avg_monthly_enplaned>201100&geosummary1==1&avg_monthly_enplaned!=.,nol
+tab avg_monthly_enplaned if nvals==1
+tab operatingairline1 if avg_monthly_enplaned>120000&avg_monthly_enplaned!=., nol
 
-tab avg_monthly_enplaned if geosummary1==2
+by operatingairline1 activityperiod: egen monthly_enplaned_int=sum(passengercount) if activitytypecode1==2&geosummary1==2
+by operatingairline1: egen avg_monthly_enplaned_int=mean(monthly_enplaned_int)
+
+tab avg_monthly_enplaned_int if nvals==1
 tab operatingairline1 if monthly_enplaned>201226&geosummary1==2&avg_monthly_enplaned!=.,nol
 
 
@@ -46,7 +49,7 @@ replace yearmonth=yearmonth+96 if year==2013
 replace yearmonth=yearmonth+102 if year==2014
 
 twoway (line monthly yearmonth if operatingairline1==14) /*
-*/ (line passengercount yearmonth if operatingairline1==28) /*
-*/ (line passengercount yearmonth if operatingairline1==60) /*
+*/ (line passengercount yearmonth if operatingairline1==59) /*
 */ (line passengercount yearmonth if operatingairline1==67) /*
+*/ (line passengercount yearmonth if operatingairline1==68) /*
 */ (line passengercount yearmonth if operatingairline1==69)
